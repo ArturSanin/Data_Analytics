@@ -35,11 +35,14 @@ CREATE TABLE DateTable (
 	DayAsNumber INT NOT NULL,
 	DayAsString CHAR(2) NOT NULL,
 	NameOfMonth VARCHAR(10) NOT NULL,
+	MonthNumberAndNameOfMonth VARCHAR(14) NOT NULL,
 	NameOfMonthShort VARCHAR(5) NOT NULL,
+	MonthNumberAndNameOfMonthShort VARCHAR(9) NOT NULL,
 	YearMonth VARCHAR(7) NOT NULL,
 	MonthYear VARCHAR(15) NOT NULL,
 	MonthYearShort VARCHAR(10) NOT NULL,
 	QuarterOfYear CHAR(2) NOT NULL,
+	QuarterNumber INT NOT NULL,
 	YearQuarter CHAR(7) NOT NULL,
 	HalfYear CHAR(2) NOT NULL,
 	YearHalf CHAR(7) NOT NULL,
@@ -47,12 +50,19 @@ CREATE TABLE DateTable (
 	WeekDayNameShort CHAR(4) NOT NULL,
 	WeekDayNumber INT NOT NULL,
 	WeekOfYear INT NOT NULL,
-	WeekOfYearString VARCHAR(7) NOT NULL,
-	YearAndWeek VARCHAR(12) NOT NULL,
+	WeekOfYearName VARCHAR(7) NOT NULL,
+	WeekOfYearNameShort VARCHAR(5) NOT NULL,
+	YearAndWeekOfYearName VARCHAR(12) NOT NULL,
+	MonthNameAndWeekOfYearName VARCHAR(18) NOT NULL,
+	MonthNameShortAndWeekOfYearNameShort VARCHAR(13) NOT NULL,
+	YearAndMonthNameAndWeekOfYearName VARCHAR(23) NOT NULL,
+	YearAndMonthNameShortAndWeekOfYearNameShort VARCHAR(18) NOT NULL,
 	DayYear INT NOT NULL,
-	DayYearString VARCHAR(7) NOT NULL,
-	YearAndDayYear VARCHAR(12) NOT NULL,
-	YearAndWeekOfYearAndDayYear VARCHAR(20) NOT NULL,
+	DayOfYearName VARCHAR(7) NOT NULL,
+	YearAndDayOfYearName VARCHAR(12) NOT NULL,
+	YearAndWeekOfYearNameAndDayOfYearName VARCHAR(20) NOT NULL,
+	YearAndMonthNameAndWeekOfYearNameAndDayOfYearName VARCHAR(31) NOT NULL,
+	YearAndMonthNameShortAndWeekOfYearNameShortAndDayOfYearName VARCHAR(26) NOT NULL,
 	CurrentYear BIT NOT NULL,
 	CurrentMonth BIT NOT NULL,
 	CurrentWeek BIT NOT NULL,
@@ -84,6 +94,20 @@ SELECT
 		WHEN Month(Date) = 12 THEN 'December'
 	END AS NameOfMonth,
 	CASE
+		WHEN Month(Date) = 1 THEN '0' + TRIM(STR(MONTH(Date))) + '-January'
+		WHEN Month(Date) = 2 THEN '0' + TRIM(STR(MONTH(Date))) + '-February'
+		WHEN Month(Date) = 3 THEN '0' + TRIM(STR(MONTH(Date))) + '-March'
+		WHEN Month(Date) = 4 THEN '0' + TRIM(STR(MONTH(Date))) + '-April' 
+		WHEN Month(Date) = 5 THEN '0' + TRIM(STR(MONTH(Date))) + '-May'
+		WHEN Month(Date) = 6 THEN '0' + TRIM(STR(MONTH(Date))) + '-June'
+		WHEN Month(Date) = 7 THEN '0' + TRIM(STR(MONTH(Date))) + '-July'
+		WHEN Month(Date) = 8 THEN '0' + TRIM(STR(MONTH(Date))) + '-August'
+		WHEN Month(Date) = 9 THEN '0' + TRIM(STR(MONTH(Date))) + '-September'
+		WHEN Month(Date) = 10 THEN '0' + TRIM(STR(MONTH(Date))) + '-October'
+		WHEN Month(Date) = 11 THEN '0' + TRIM(STR(MONTH(Date))) + '-November'
+		WHEN Month(Date) = 12 THEN '0' + TRIM(STR(MONTH(Date))) + '-December'
+	END AS MonthNumberAndNameOfMonth,
+	CASE
 		WHEN Month(Date) = 1 THEN 'Jan.'
 		WHEN Month(Date) = 2 THEN 'Feb.'
 		WHEN Month(Date) = 3 THEN 'Mar.'
@@ -97,6 +121,20 @@ SELECT
 		WHEN Month(Date) = 11 THEN 'Nov.'
 		WHEN Month(Date) = 12 THEN 'Dec.'
 	END AS NameOfMonthShort,
+	CASE
+		WHEN Month(Date) = 1 THEN '0' + TRIM(STR(MONTH(Date))) + '-Jan.'
+		WHEN Month(Date) = 2 THEN '0' + TRIM(STR(MONTH(Date))) + '-Feb.'
+		WHEN Month(Date) = 3 THEN '0' + TRIM(STR(MONTH(Date))) + '-Mar.'
+		WHEN Month(Date) = 4 THEN '0' + TRIM(STR(MONTH(Date))) + '-Apr.' 
+		WHEN Month(Date) = 5 THEN '0' + TRIM(STR(MONTH(Date))) + '-May'
+		WHEN Month(Date) = 6 THEN '0' + TRIM(STR(MONTH(Date))) + '-June'
+		WHEN Month(Date) = 7 THEN '0' + TRIM(STR(MONTH(Date))) + '-July'
+		WHEN Month(Date) = 8 THEN '0' + TRIM(STR(MONTH(Date))) + '-Aug.'
+		WHEN Month(Date) = 9 THEN '0' + TRIM(STR(MONTH(Date))) + '-Sept.'
+		WHEN Month(Date) = 10 THEN '0' + TRIM(STR(MONTH(Date))) + '-Oct.'
+		WHEN Month(Date) = 11 THEN '0' + TRIM(STR(MONTH(Date))) + '-Nov.'
+		WHEN Month(Date) = 12 THEN '0' + TRIM(STR(MONTH(Date))) + '-Dec.'
+	END AS MonthNumberAndNameOfMonthShort,
 	TRIM(STR(YEAR(Date))) + '-' + CASE WHEN LEN(TRIM(STR(MONTH(Date)))) = 1 THEN '0' + TRIM(STR(MONTH(Date))) ELSE TRIM(STR(MONTH(Date))) END AS YearMonth,
 	CASE
 		WHEN Month(Date) = 1 THEN 'January' + ' ' + TRIM(STR(YEAR(Date)))
@@ -140,6 +178,20 @@ SELECT
 		WHEN Month(Date) = 11 THEN 'Q4'
 		WHEN Month(Date) = 12 THEN 'Q4'
 	END AS QuarterOfYear,
+	CASE
+		WHEN Month(Date) = 1 THEN 1
+		WHEN Month(Date) = 2 THEN 1
+		WHEN Month(Date) = 3 THEN 1
+		WHEN Month(Date) = 4 THEN 2 
+		WHEN Month(Date) = 5 THEN 2
+		WHEN Month(Date) = 6 THEN 2
+		WHEN Month(Date) = 7 THEN 3
+		WHEN Month(Date) = 8 THEN 3
+		WHEN Month(Date) = 9 THEN 3
+		WHEN Month(Date) = 10 THEN 4
+		WHEN Month(Date) = 11 THEN 4
+		WHEN Month(Date) = 12 THEN 4
+	END AS QuarterNumber,
 	CASE
 		WHEN Month(Date) = 1 THEN TRIM(STR(YEAR(Date))) + '/' + 'Q1'
 		WHEN Month(Date) = 2 THEN TRIM(STR(YEAR(Date))) + '/' + 'Q1'
@@ -210,12 +262,97 @@ SELECT
 		WHEN RowNumber % 7 = 6 THEN 6
 	END AS WeekDayNumber,
 	DATEPART(WEEK, Date) AS WeekOfYear,
-	'Week ' + TRIM(STR(DATEPART(WEEK, Date))) AS WeekOfYearString,
-	TRIM(STR(YEAR(Date))) + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) AS YearAndWeek, 
+	'Week ' + TRIM(STR(DATEPART(WEEK, Date))) AS WeekOfYearName,
+	'Wk ' + TRIM(STR(DATEPART(WEEK, Date))) AS WeekOfYearNameShort,
+	TRIM(STR(YEAR(Date))) + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) AS YearAndWeekOfYearName,
+	CASE
+		WHEN Month(Date) = 1 THEN 'January' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 2 THEN 'February' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 3 THEN 'March' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 4 THEN 'April' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 5 THEN 'May' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 6 THEN 'June' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 7 THEN 'July' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 8 THEN 'August' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 9 THEN 'September' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 10 THEN 'October' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 11 THEN 'November' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 12 THEN 'December' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+	END AS MonthNameAndWeekOfYearName,
+	CASE
+		WHEN Month(Date) = 1 THEN 'Jan.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 2 THEN 'Feb.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 3 THEN 'Mar.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 4 THEN 'Apr.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 5 THEN 'May' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 6 THEN 'June' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 7 THEN 'July' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 8 THEN 'Aug.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 9 THEN 'Sept.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 10 THEN 'Oct.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 11 THEN 'Nov.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 12 THEN 'Dec.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+	END AS MonthNameShortAndWeekOfYearNameShort,
+	CASE
+		WHEN Month(Date) = 1 THEN TRIM(STR(YEAR(Date))) + ' January' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 2 THEN TRIM(STR(YEAR(Date))) + ' February' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 3 THEN TRIM(STR(YEAR(Date))) + ' March' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 4 THEN TRIM(STR(YEAR(Date))) + ' April' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 5 THEN TRIM(STR(YEAR(Date))) + ' May' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 6 THEN TRIM(STR(YEAR(Date))) + ' June' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 7 THEN TRIM(STR(YEAR(Date))) + ' July' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 8 THEN TRIM(STR(YEAR(Date))) + ' August' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 9 THEN TRIM(STR(YEAR(Date))) + ' September' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 10 THEN TRIM(STR(YEAR(Date))) + ' October' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 11 THEN TRIM(STR(YEAR(Date))) + ' November' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 12 THEN TRIM(STR(YEAR(Date))) + ' December' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date)))
+	END AS YearAndMonthNameAndWeekOfYearName,
+	CASE
+		WHEN Month(Date) = 1 THEN TRIM(STR(YEAR(Date))) + ' Jan.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 2 THEN TRIM(STR(YEAR(Date))) + ' Feb.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 3 THEN TRIM(STR(YEAR(Date))) + ' Mar.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 4 THEN TRIM(STR(YEAR(Date))) + ' Apr.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 5 THEN TRIM(STR(YEAR(Date))) + ' May' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 6 THEN TRIM(STR(YEAR(Date))) + ' June' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 7 THEN TRIM(STR(YEAR(Date))) + ' July' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 8 THEN TRIM(STR(YEAR(Date))) + ' Aug.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 9 THEN TRIM(STR(YEAR(Date))) + ' Sept.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 10 THEN TRIM(STR(YEAR(Date))) + ' Oct.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 11 THEN TRIM(STR(YEAR(Date))) + ' Nov.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+		WHEN Month(Date) = 12 THEN TRIM(STR(YEAR(Date))) + ' Dec.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date)))
+	END AS YearAndMonthNameShortAndWeekOfYearNameShort,
 	DATEPART(DAYOFYEAR, DATE) AS DayYear,
-	'Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE))) AS DayYearString,
-	TRIM(STR(YEAR(Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE))) AS YearAndDayYear,
-	TRIM(STR(YEAR(Date))) + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE))) AS YearAndWeekOfYearAndDayYear,
+	'Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE))) AS DayOfYearName,
+	TRIM(STR(YEAR(Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE))) AS YearAndDayOfYearName,
+	TRIM(STR(YEAR(Date))) + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE))) AS YearAndWeekOfYearNameAndDayOfYearName,
+	CASE
+		WHEN Month(Date) = 1 THEN TRIM(STR(YEAR(Date))) + ' January' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 2 THEN TRIM(STR(YEAR(Date))) + ' February' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 3 THEN TRIM(STR(YEAR(Date))) + ' March' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 4 THEN TRIM(STR(YEAR(Date))) + ' April' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 5 THEN TRIM(STR(YEAR(Date))) + ' May' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 6 THEN TRIM(STR(YEAR(Date))) + ' June' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 7 THEN TRIM(STR(YEAR(Date))) + ' July' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 8 THEN TRIM(STR(YEAR(Date))) + ' August' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 9 THEN TRIM(STR(YEAR(Date))) + ' September' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 10 THEN TRIM(STR(YEAR(Date))) + ' October' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 11 THEN TRIM(STR(YEAR(Date))) + ' November' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 12 THEN TRIM(STR(YEAR(Date))) + ' December' + ' Week ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+	END AS YearAndMonthNameAndWeekOfYearNameAndDayOfYearName,
+	CASE
+		WHEN Month(Date) = 1 THEN TRIM(STR(YEAR(Date))) + ' Jan.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 2 THEN TRIM(STR(YEAR(Date))) + ' Feb.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 3 THEN TRIM(STR(YEAR(Date))) + ' Mar.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 4 THEN TRIM(STR(YEAR(Date))) + ' Apr.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 5 THEN TRIM(STR(YEAR(Date))) + ' May' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 6 THEN TRIM(STR(YEAR(Date))) + ' June' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 7 THEN TRIM(STR(YEAR(Date))) + ' July' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 8 THEN TRIM(STR(YEAR(Date))) + ' Aug.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 9 THEN TRIM(STR(YEAR(Date))) + ' Sept.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 10 THEN TRIM(STR(YEAR(Date))) + ' Oct.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 11 THEN TRIM(STR(YEAR(Date))) + ' Nov.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+		WHEN Month(Date) = 12 THEN TRIM(STR(YEAR(Date))) + ' Dec.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
+	END AS YearAndMonthNameShortAndWeekOfYearNameShortAndDayOfYearName,
 	CASE
 		WHEN YEAR(Date) = YEAR(GETDATE()) THEN 1
 		ELSE 0
