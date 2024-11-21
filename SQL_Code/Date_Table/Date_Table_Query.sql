@@ -1,5 +1,5 @@
 /*
-	The following SQL code creates a general date table that can be used for data analysis.
+	The following SQL code creates a date table that can be used for data analysis.
 */
 
 DECLARE @StartDate DATE
@@ -7,6 +7,12 @@ SET @StartDate = '1900-01-01' -- This parameter sets the date with which the dat
 
 DECLARE @EndDate DATE
 SET @EndDate = '2099-12-31' -- This parameter sets the date with which the date table should end.
+
+DECLARE @BeginFiscalYear DATE
+SET @BeginFiscalYear = '1899-07-01' -- This parameter sets the beginning of the fiscal year. Note, that the year portion of the date is chosen arbitary.
+
+DECLARE @EndFiscalYear DATE
+SET @EndFiscalYear = '1900-06-30' -- This parameter stes the end of the fiscal year. Note, that the year portion of the date is chosen arbitary.
 
 -- Creating a temporary table, which stores all dates begining from @StartDate till @EndDate, with additional column which counts the rows of the table.
 DECLARE @tmp_DateTable TABLE(
@@ -38,14 +44,14 @@ CREATE TABLE DateTable (
 	MonthNumberAndNameOfMonth VARCHAR(14) NOT NULL,
 	NameOfMonthShort VARCHAR(5) NOT NULL,
 	MonthNumberAndNameOfMonthShort VARCHAR(9) NOT NULL,
-	YearMonth VARCHAR(7) NOT NULL,
-	MonthYear VARCHAR(15) NOT NULL,
-	MonthYearShort VARCHAR(10) NOT NULL,
+	YearAndMonthNumber VARCHAR(7) NOT NULL,
+	NameOfMonthAndYear VARCHAR(15) NOT NULL,
+	NameOfMonthShortAndYear VARCHAR(10) NOT NULL,
 	QuarterOfYear CHAR(2) NOT NULL,
 	QuarterNumber INT NOT NULL,
-	YearQuarter CHAR(7) NOT NULL,
+	YearAndQuarterOfYear CHAR(7) NOT NULL,
 	HalfYear CHAR(2) NOT NULL,
-	YearHalf CHAR(7) NOT NULL,
+	YearAndHalfYear CHAR(7) NOT NULL,
 	WeekDayName VARCHAR(10) NOT NULL,
 	WeekDayNameShort CHAR(4) NOT NULL,
 	WeekDayNumber INT NOT NULL,
@@ -63,11 +69,14 @@ CREATE TABLE DateTable (
 	YearAndWeekOfYearNameAndDayOfYearName VARCHAR(20) NOT NULL,
 	YearAndMonthNameAndWeekOfYearNameAndDayOfYearName VARCHAR(31) NOT NULL,
 	YearAndMonthNameShortAndWeekOfYearNameShortAndDayOfYearName VARCHAR(26) NOT NULL,
+	LeapYear BIT NOT NULL,
 	CurrentYear BIT NOT NULL,
+	CurrentHalfYear BIT NOT NULL,
+	CurrentQuarter BIT NOT NULL,
 	CurrentMonth BIT NOT NULL,
 	CurrentWeek BIT NOT NULL,
 	CurrentDate BIT NOT NULL,
-	LeapYear BIT NOT NULL,
+	FiscalYear INT NOT NULL
 );
 
 INSERT INTO DateTable
@@ -135,7 +144,7 @@ SELECT
 		WHEN Month(Date) = 11 THEN '0' + TRIM(STR(MONTH(Date))) + '-Nov.'
 		WHEN Month(Date) = 12 THEN '0' + TRIM(STR(MONTH(Date))) + '-Dec.'
 	END AS MonthNumberAndNameOfMonthShort,
-	TRIM(STR(YEAR(Date))) + '-' + CASE WHEN LEN(TRIM(STR(MONTH(Date)))) = 1 THEN '0' + TRIM(STR(MONTH(Date))) ELSE TRIM(STR(MONTH(Date))) END AS YearMonth,
+	TRIM(STR(YEAR(Date))) + '-' + CASE WHEN LEN(TRIM(STR(MONTH(Date)))) = 1 THEN '0' + TRIM(STR(MONTH(Date))) ELSE TRIM(STR(MONTH(Date))) END AS YearAndMonthNumber,
 	CASE
 		WHEN Month(Date) = 1 THEN 'January' + ' ' + TRIM(STR(YEAR(Date)))
 		WHEN Month(Date) = 2 THEN 'February' + ' ' + TRIM(STR(YEAR(Date)))
@@ -149,7 +158,7 @@ SELECT
 		WHEN Month(Date) = 10 THEN 'October' + ' ' + TRIM(STR(YEAR(Date)))
 		WHEN Month(Date) = 11 THEN 'November' + ' ' + TRIM(STR(YEAR(Date)))
 		WHEN Month(Date) = 12 THEN 'December' + ' ' + TRIM(STR(YEAR(Date)))
-	END AS MonthYear,
+	END AS NameOfMonthAndYear,
 	CASE
 		WHEN Month(Date) = 1 THEN 'Jan.' + ' ' + TRIM(STR(YEAR(Date)))
 		WHEN Month(Date) = 2 THEN 'Feb.' + ' ' + TRIM(STR(YEAR(Date)))
@@ -163,7 +172,7 @@ SELECT
 		WHEN Month(Date) = 10 THEN 'Oct.' + ' ' + TRIM(STR(YEAR(Date)))
 		WHEN Month(Date) = 11 THEN 'Nov.' + ' ' + TRIM(STR(YEAR(Date)))
 		WHEN Month(Date) = 12 THEN 'Dec.' + ' ' + TRIM(STR(YEAR(Date)))
-	END AS MonthYearShort,
+	END AS NameOfMonthShortAndYear,
 	CASE
 		WHEN Month(Date) = 1 THEN 'Q1'
 		WHEN Month(Date) = 2 THEN 'Q1'
@@ -205,7 +214,7 @@ SELECT
 		WHEN Month(Date) = 10 THEN TRIM(STR(YEAR(Date))) + '/' + 'Q4'
 		WHEN Month(Date) = 11 THEN TRIM(STR(YEAR(Date))) + '/' + 'Q4'
 		WHEN Month(Date) = 12 THEN TRIM(STR(YEAR(Date))) + '/' + 'Q4'
-	END AS YearQuarter,
+	END AS YearAndQuarterOfYear,
 	CASE
 		WHEN Month(Date) = 1 THEN 'H1'
 		WHEN Month(Date) = 2 THEN 'H1'
@@ -233,7 +242,7 @@ SELECT
 		WHEN Month(Date) = 10 THEN TRIM(STR(YEAR(Date))) + '/' + 'H2'
 		WHEN Month(Date) = 11 THEN TRIM(STR(YEAR(Date))) + '/' + 'H2'
 		WHEN Month(Date) = 12 THEN TRIM(STR(YEAR(Date))) + '/' + 'H2'
-	END AS YearHalf,
+	END AS YearAndHalfYear,
 	CASE
 		WHEN RowNumber % 7 = 0 THEN 'Sunday'
 		WHEN RowNumber % 7 = 1 THEN 'Monday'
@@ -354,9 +363,25 @@ SELECT
 		WHEN Month(Date) = 12 THEN TRIM(STR(YEAR(Date))) + ' Dec.' + ' Wk ' + TRIM(STR(DATEPART(WEEK, Date))) + ' Day ' + TRIM(STR(DATEPART(DAYOFYEAR, DATE)))
 	END AS YearAndMonthNameShortAndWeekOfYearNameShortAndDayOfYearName,
 	CASE
+		WHEN YEAR(Date) IN (SELECT YEAR(Date) FROM @tmp_DateTable WHERE MONTH(Date) = 2 AND DAY(Date) = 29) THEN 1
+		ELSE 0
+	END AS LeapYear,
+	CASE
 		WHEN YEAR(Date) = YEAR(GETDATE()) THEN 1
 		ELSE 0
 	END AS CurrentYear,
+	CASE
+		WHEN YEAR(Date) = YEAR(GETDATE()) AND MONTH(Date) BETWEEN 1 AND 6 AND MONTH(GETDATE()) BETWEEN 1 AND 6 THEN 1
+		WHEN YEAR(Date) = YEAR(GETDATE()) AND MONTH(Date) BETWEEN 7 AND 12 AND MONTH(GETDATE()) BETWEEN 7 AND 12 THEN 1
+		ELSE 0
+	END AS CurrentHalfYear,
+	CASE
+		WHEN YEAR(Date) = YEAR(GETDATE()) AND MONTH(Date) BETWEEN 1 AND 3 AND MONTH(GETDATE()) BETWEEN 1 AND 3 THEN 1
+		WHEN YEAR(Date) = YEAR(GETDATE()) AND MONTH(Date) BETWEEN 4 AND 6 AND MONTH(GETDATE()) BETWEEN 4 AND 6 THEN 1
+		WHEN YEAR(Date) = YEAR(GETDATE()) AND MONTH(Date) BETWEEN 7 AND 9 AND MONTH(GETDATE()) BETWEEN 7 AND 9 THEN 1
+		WHEN YEAR(Date) = YEAR(GETDATE()) AND MONTH(Date) BETWEEN 10 AND 12 AND MONTH(GETDATE()) BETWEEN 10 AND 12 THEN 1
+		ELSE 0
+	END AS CurrentQuarter,
 	CASE
 		WHEN YEAR(Date) = YEAR(GETDATE()) AND MONTH(Date) = MONTH(GETDATE()) THEN 1
 		ELSE 0
@@ -370,7 +395,7 @@ SELECT
 		ELSE 0
 	END AS CurrentDate,
 	CASE
-		WHEN YEAR(Date) IN (SELECT YEAR(Date) FROM @tmp_DateTable WHERE MONTH(Date) = 2 AND DAY(Date) = 29) THEN 1
-		ELSE 0
-	END AS LeapYear
+		WHEN MONTH(Date) BETWEEN MONTH(@BeginFiscalYear) AND 12 THEN YEAR(Date) + 1
+		WHEN MONTH(Date) BETWEEN 1 AND MONTH(@EndFiscalYear) THEN YEAR(Date)
+	END AS FiscalYear
 FROM @tmp_DateTable
