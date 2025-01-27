@@ -58,7 +58,7 @@ DECLARE @RandomTable TABLE (
 	column_5 INT
 );
 
-WHILE @counter <= @rows
+WHILE (@counter <= @rows)
 BEGIN
 	IF @table_type = 'positive' 
 		INSERT INTO @RandomTable
@@ -68,18 +68,16 @@ BEGIN
 			ROUND(@column_scale_parameter_3 * RAND(), 0),
 			ROUND(@column_scale_parameter_4 * RAND(), 0),
 			ROUND(@column_scale_parameter_5 * RAND(), 0)
-		)
-		SET @counter = @counter + 1;
+		);
 	IF @table_type = 'negative' 
 		INSERT INTO @RandomTable
 		VALUES (
-			-ROUND(@column_scale_parameter_1 * RAND(), 0), 
-			-ROUND(@column_scale_parameter_2 * RAND(), 0),
-			-ROUND(@column_scale_parameter_3 * RAND(), 0),
-			-ROUND(@column_scale_parameter_4 * RAND(), 0),
-			-ROUND(@column_scale_parameter_5 * RAND(), 0)
-		)
-		SET @counter = @counter + 1;
+			(-1) * ROUND(@column_scale_parameter_1 * RAND(), 0), 
+			(-1) * ROUND(@column_scale_parameter_2 * RAND(), 0),
+			(-1) * ROUND(@column_scale_parameter_3 * RAND(), 0),
+			(-1) * ROUND(@column_scale_parameter_4 * RAND(), 0),
+			(-1) * ROUND(@column_scale_parameter_5 * RAND(), 0)
+		);
 	IF @table_type = 'both' 
 		INSERT INTO @RandomTable
 		VALUES (
@@ -88,8 +86,8 @@ BEGIN
 			(2 * ROUND(RAND(), 0) - 1) * ROUND(@column_scale_parameter_3 * RAND(), 0),
 			(2 * ROUND(RAND(), 0) - 1) * ROUND(@column_scale_parameter_4 * RAND(), 0),
 			(2 * ROUND(RAND(), 0) - 1) * ROUND(@column_scale_parameter_5 * RAND(), 0)
-		)
-		SET @counter = @counter + 1;
+		);
+	SET @counter = @counter + 1;
 END;
 
 IF @table_type IN ('positive', 'negative', 'both')
