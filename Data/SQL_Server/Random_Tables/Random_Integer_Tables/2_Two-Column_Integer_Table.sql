@@ -8,6 +8,8 @@
 	@counter: A parameter used as a loop counter.
 */
 
+DROP TABLE IF EXISTS [dbo].[RandomTable];
+
 DECLARE @scale_parameter_1 INT,
 		@scale_parameter_2 INT;
 
@@ -26,20 +28,17 @@ DECLARE @rows INT,
 SET @rows = 1000;
 SET @counter = 1;
 
-DECLARE @RandomTable TABLE (
+CREATE TABLE RandomTable (
 	column_1 INT,
 	column_2 INT
 );
 
 WHILE (@counter <= @rows)
 BEGIN
-	INSERT INTO @RandomTable
+	INSERT INTO RandomTable
 	VALUES (
 		(2 * ROUND(RAND(), 0) - 1) * ROUND(@column_scale_parameter_1 * RAND(), 0), 
 		(2 * ROUND(RAND(), 0) - 1) * ROUND(@column_scale_parameter_2 * RAND(), 0)
 	)
 	SET @counter = @counter + 1
 END;
-
-SELECT *
-FROM @RandomTable;
